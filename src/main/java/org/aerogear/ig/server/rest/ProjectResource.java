@@ -18,6 +18,7 @@ package org.aerogear.ig.server.rest;
 
 import org.aerogear.ig.server.model.Project;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -39,6 +40,7 @@ public class ProjectResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin"})
     public Project create(Project entity) {
         em.persist(entity);
         return entity;
