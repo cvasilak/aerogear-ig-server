@@ -21,6 +21,7 @@ import org.aerogear.ig.server.model.Task;
 import org.aerogear.ig.server.util.InvalidParentException;
 import org.omg.CORBA.DynAnyPackage.Invalid;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -41,6 +42,7 @@ public class TagResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin"})
     public Tag create(Tag tag, @Context UriInfo uriInfo) {
         // extract Task ID (if set) from the path
         Long taskId = (uriInfo.getPathSegments().size() != 1?
@@ -66,6 +68,7 @@ public class TagResource {
     @Path("/{id:[0-9][0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin"})
     public Tag update(@PathParam("id")
                       Long id, Tag tag, @Context UriInfo uriInfo) {
         tag.setId(id);
@@ -97,6 +100,7 @@ public class TagResource {
     @DELETE
     @Path("/{id:[0-9][0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin"})
     public List<Long> deleteById(@PathParam("id")
                                  Long id) {
         List<Long> taskIds = em.createQuery("SELECT t.id FROM Task t INNER JOIN t.tags o WHERE o.id = :id", Long.class)
@@ -116,6 +120,7 @@ public class TagResource {
     @GET
     @Path("/{id:[0-9][0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin", "simple"})
     public Tag findById(@PathParam("id")
                         Long id) {
         return em.find(Tag.class, id);
@@ -123,6 +128,7 @@ public class TagResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin", "simple"})
     public List<Tag> listAll(@Context UriInfo uriInfo) {
         // extract Task ID (if set) from the path
         Long taskId = (uriInfo.getPathSegments().size() != 1?

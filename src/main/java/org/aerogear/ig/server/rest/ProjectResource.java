@@ -40,15 +40,27 @@ public class ProjectResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"admin"})
+        @RolesAllowed({"admin"})
     public Project create(Project entity) {
         em.persist(entity);
+        return entity;
+    }
+
+    @PUT
+    @Path("/{id:[0-9][0-9]*}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin"})
+    public Project update(@PathParam("id") Long id, Project entity) {
+        entity.setId(Long.valueOf(id));
+        entity = em.merge(entity);
         return entity;
     }
 
     @DELETE
     @Path("/{id:[0-9][0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin"})
     public List<Long> deleteById(@PathParam("id") Long id) {
         List<Long> taskIds = em.createQuery("SELECT t.id FROM Task t INNER JOIN t.project p WHERE p.id = :id", Long.class)
                 .setParameter("id", id)
@@ -68,6 +80,7 @@ public class ProjectResource {
     @GET
     @Path("/{id:[0-9][0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin", "simple"})
     public Project findById(@PathParam("id") Long id) {
         return em.find(Project.class, id);
     }
@@ -75,6 +88,7 @@ public class ProjectResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin", "simple"})
     public List<Project> listAll() {
         return em.createQuery("SELECT p FROM Project p", Project.class).getResultList();
     }
@@ -85,15 +99,5 @@ public class ProjectResource {
     @Path("/{id:[0-9][0-9]*}/tasks")
     public TaskResource listTasks(@PathParam("id") Long id) {
         return tasks;
-    }
-
-    @PUT
-    @Path("/{id:[0-9][0-9]*}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Project update(@PathParam("id") Long id, Project entity) {
-        entity.setId(Long.valueOf(id));
-        entity = em.merge(entity);
-        return entity;
     }
 }

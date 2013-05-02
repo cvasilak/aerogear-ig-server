@@ -20,6 +20,7 @@ import org.aerogear.ig.server.model.Project;
 import org.aerogear.ig.server.model.Task;
 import org.aerogear.ig.server.util.InvalidParentException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -43,6 +44,7 @@ public class TaskResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin"})
     public Task create(Task task, @Context UriInfo uriInfo) {
         // extract Project ID (if set) from the path
         Long projectId = (uriInfo.getPathSegments().size() != 1?
@@ -68,6 +70,7 @@ public class TaskResource {
     @Path("/{id:[0-9][0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin"})
     public Task update(@PathParam("id")
                        Long id, Task task, @Context UriInfo uriInfo) {
         task.setId(id);
@@ -95,6 +98,7 @@ public class TaskResource {
     @DELETE
     @Path("/{id:[0-9][0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin"})
     public void deleteById(@PathParam("id")
                            Long id) {
         Task result = em.find(Task.class, id);
@@ -104,6 +108,7 @@ public class TaskResource {
     @GET
     @Path("/{id:[0-9][0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin", "simple"})
     public Task findById(@PathParam("id")
                          Long id) {
         return em.find(Task.class, id);
@@ -111,6 +116,7 @@ public class TaskResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin", "simple"})
     public List<Task> listAll(@Context UriInfo uriInfo) {
         // extract Project ID (if set) from the path
         Long projectId = (uriInfo.getPathSegments().size() != 1?
